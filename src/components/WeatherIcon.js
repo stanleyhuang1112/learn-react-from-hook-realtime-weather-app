@@ -71,8 +71,6 @@ const weatherCode2Type = (weatherCode) => {
   return weatherType;
 };
 
-const weatherCode = '1';
-
 const IconContainer = styled.div`
   flex-basis: 30%;
   svg {

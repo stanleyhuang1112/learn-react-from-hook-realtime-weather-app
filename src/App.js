@@ -35,8 +35,6 @@ const Container = styled.div`
 `;
 
 const AUTHORIZATION_KEY = 'CWB-FBFF0FFF-E3C6-4FB7-AA79-1A8ACBAC1BAD'
-const LOCATION_NAME = '臺北'
-const LOCATION_NAME_FORECAST = '臺北市';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState('light')
@@ -47,7 +45,7 @@ function App() {
 
   const currentLocation = useMemo(() => findLocation(currentCity), [currentCity])
 
-  const { cityName, locationName, sunriseCityName } = currentLocation
+  const { cityName, locationName } = currentLocation
 
   const [currentWeather, fetchData] = useWeatherAPI({
     authorizationKey: AUTHORIZATION_KEY,
@@ -69,7 +67,7 @@ function App() {
     fetchData()
   }, [fetchData])
 
-  const moment = useMemo(() => getMoment(LOCATION_NAME_FORECAST), [])
+  const moment = useMemo(() => getMoment(cityName), [cityName])
 
   useEffect(() => {
     setCurrentTheme(moment === 'day' ? 'light' : 'dark')
