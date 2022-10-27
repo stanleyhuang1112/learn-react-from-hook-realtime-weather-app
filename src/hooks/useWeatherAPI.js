@@ -1,10 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const fetchCurrentWeather = ({ authorizationKey, locationName }) => {
-  // setCurrentWeather((preState) => ({
-  //   ...preState,
-  //   isLoading: true,
-  // }))
   return fetch(`https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${authorizationKey}&locationName=${locationName}`)
     .then((response) => response.json())
     .then((data) => {
@@ -67,6 +63,10 @@ const useWeatherAPI = ({ locationName, cityName, authorizationKey }) => {
   })
 
   const fetchData = useCallback(async () => {
+    setWeatherElement((preState) => ({
+      ...preState,
+      isLoading: true,
+    }))
     const [currentWeather, weatherForecast] = await Promise.all([
       fetchCurrentWeather({authorizationKey, locationName}),
       fetchWeatherForecast({authorizationKey, cityName}),

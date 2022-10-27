@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { getMoment } from './utils/helpers';
+import { useState, useEffect, useMemo } from 'react'
 import WeatherCard from './views/WeatherCard';
+import WeatherSetting from './views/WeatherSetting';
 import useWeatherAPI from './hooks/useWeatherAPI';
+import { getMoment, findLocation } from './utils/helpers';
 
 const theme = {
   light: {
@@ -39,11 +40,30 @@ const LOCATION_NAME_FORECAST = '臺北市';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState('light')
+
+  const storageCity = localStorage.getItem('cityName') || '臺北市';
+  
+  const [currentCity, setCurrentCity] = useState(storageCity)
+
+  const currentLocation = useMemo(() => findLocation(currentCity), [currentCity])
+
+  const { cityName, locationName, sunriseCityName } = currentLocation
+
   const [currentWeather, fetchData] = useWeatherAPI({
     authorizationKey: AUTHORIZATION_KEY,
-    locationName: LOCATION_NAME,
-    cityName: LOCATION_NAME_FORECAST,
+    locationName,
+    cityName,
   })
+
+  const handleCurrentCityChange = (currentCity) => {
+    setCurrentCity(currentCity)    
+  }
+
+  const [currentPage, setCurrentPage] = useState('WeatherCard')
+
+  const handleCurrentPageChange = (currentPage) => {
+    setCurrentPage(currentPage)
+  }
 
   useEffect(() => {
     fetchData()
@@ -58,11 +78,23 @@ function App() {
   return (
     <ThemeProvider theme={theme[currentTheme]}>
       <Container>
-        <WeatherCard
-          currentWeather={currentWeather}
-          moment={moment}
-          fetchData={fetchData}
-        />
+        {
+          currentPage === 'WeatherCard'
+            ?
+            <WeatherCard
+              cityName={cityName}
+              currentWeather={currentWeather}
+              moment={moment}
+              fetchData={fetchData}
+              handleCurrentPageChange={handleCurrentPageChange}
+            />
+            :
+            <WeatherSetting
+              cityName={cityName}
+              handleCurrentCityChange={handleCurrentCityChange}
+              handleCurrentPageChange={handleCurrentPageChange}
+            />
+        }
       </Container>
     </ThemeProvider>
   );
